@@ -392,7 +392,7 @@ spec:
               key: access_key
               name: aws-secret
               optional: true
-        image: amazon/aws-ebs-csi-driver:latest
+        image: amazon/aws-ebs-csi-driver:v0.5.0
         livenessProbe:
           failureThreshold: 5
           httpGet:
@@ -477,7 +477,7 @@ spec:
         env:
         - name: CSI_ENDPOINT
           value: unix:/csi/csi.sock
-        image: amazon/aws-ebs-csi-driver:latest
+        image: amazon/aws-ebs-csi-driver:v0.5.0
         livenessProbe:
           failureThreshold: 5
           httpGet:
