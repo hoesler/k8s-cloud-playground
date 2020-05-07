@@ -60,8 +60,8 @@ I am using a cloud-based load balancer for the API servers, to be more productio
      * Adapt `project_name` if you feel like it. It will create a project of this name in DO and be used as a prefix for names in AWS (so it should not be too long). Also, this will be the name of the cluster.
      * Configure sensible `admin_cidrs` for the network you are sitting in. You can simply use your [current.public.IP.address](https://www.whatsmyip.org/)/32 , e.g. 123.123.123.123/32, or use a broader range if it might get reassigned dynamically.
      * Choose the size of your cluster by commenting out some of the nodes from the example. It might be a good idea to start with 1 master and 1 worker. You can change the cluster size anytime later. VM sizes are defined in [do/data.tf](do/data.tf) and [aws/data.tf](aws/data.tf).
-  2. Edit `clusters.tf` to comment out the cluster you would like to start: `do_cluster` or `aws_cluster`. Also check if the `region` is suitable for you. The AWS cluster has an extra `owner_tag` parameter because it will add an `Owner` tag to most resources. Useful if, like in my case, you are sharing the AWS account.
-  3. Edit `outputs.tf` and uncomment the outputs from the cluster you are using. The `init_cluster.sh` script depends on these. I could have done some `try()` trickery here, I guess.
+  2. Copy `clusters.tf.template` to `clusters.tf` and comment out the cluster you would like to start: `do_cluster` or `aws_cluster`. Also check if the `region` is suitable for you. The AWS cluster has an extra `owner_tag` parameter because it will add an `Owner` tag to most resources. Useful if, like in my case, you are sharing the AWS account.
+  3. Copy `outputs.tf.template` to `outputs.tf` and uncomment the outputs from the cluster you are using. The `init_cluster.sh` script depends on these. I could have done some `try()` trickery here, I guess.
 
 ## Deploy the cluster
 
