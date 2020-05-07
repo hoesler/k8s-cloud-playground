@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 SSH_USER=${1?"Please specify ssh user name"}
 
