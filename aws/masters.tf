@@ -2,9 +2,13 @@ resource "aws_instance" "master_nodes" {
   for_each = toset(keys(var.masters))
 
   ami                  = data.aws_ami.ubuntu.id
-  instance_type        = local.sizes[var.masters[each.value].size]
+  instance_type        = var.masters[each.value].instance_type
   key_name             = var.ssh_keys[0]
   iam_instance_profile = aws_iam_instance_profile.master_nodes.name
+
+  root_block_device {
+    volume_size = var.masters[each.value].root_volume_size
+  }
 
   # Spread nodes across AZs consistently.
   subnet_id = module.vpc.public_subnets[index(local.ordered_masters, each.value) % var.az_count]

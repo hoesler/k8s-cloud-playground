@@ -2,13 +2,16 @@ resource "aws_instance" "worker_nodes" {
   for_each = toset(keys(var.workers))
 
   ami                  = data.aws_ami.ubuntu.id
-  instance_type        = local.sizes[var.workers[each.value].size]
+  instance_type        = var.workers[each.value].instance_type
   key_name             = var.ssh_keys[0]
   iam_instance_profile = aws_iam_instance_profile.worker_nodes.name
 
+  root_block_device {
+    volume_size = var.workers[each.value].root_volume_size
+  }
+
   # Spread nodes across AZs consistently.
   subnet_id = module.vpc.public_subnets[index(local.ordered_workers, each.value) % var.az_count]
-
 
   vpc_security_group_ids = [
     aws_security_group.all_nodes.id

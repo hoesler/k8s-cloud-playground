@@ -17,8 +17,13 @@ data "aws_ami" "ubuntu" {
 
 locals {
   sizes = {
-    "S" = "t2.micro"
-    "M" = "t2.medium"
+    "XXS" = "t3.nano"
+    "XS" = "t3.micro"
+    "S" = "t3.small"
+    "M" = "t3.medium"
+    "L" = "t3.large"
+    "XL" = "t3.xlarge"
+    "XXL" = "t3.2xlarge"
   }
 
   # Ensure a consistent spread of nodes across AZs.

@@ -67,12 +67,14 @@ variable "admin_cidrs" {
 
 variable "masters" {
   type = map(object({
-    size = string
+    instance_type = string,
+    root_volume_size = string
   }))
 }
 
 variable "workers" {
   type = map(object({
-    size = string
+    instance_type = string,
+    root_volume_size = string
   }))
 }
