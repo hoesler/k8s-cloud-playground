@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Needed for CSI on DO to work properly.
 # https://github.com/digitalocean/csi-digitalocean/issues/297#issuecomment-619338495
 DO_RULES=/etc/udev/rules.d/99-digitalocean-automount.rules
@@ -88,5 +90,44 @@ cp /etc/kubernetes/admin.conf / && chmod a+r /admin.conf
 %{ else }
 
 kubeadm join --config kubeadmconf.yaml
+
+%{ endif }
+
+%{ if ! is_master }
+
+########### BEGIN GPU support ###########
+
+if lshw -C display | grep -q NVIDIA; then
+
+  # Add the package repositories
+  distribution=$(. /etc/os-release;echo $${ID}$${VERSION_ID})
+  curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
+  curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list
+
+  apt-get update && apt-get -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" install -y \
+    nvidia-docker2 \
+    ubuntu-drivers-common \
+    jq
+
+  ubuntu-drivers autoinstall
+
+  daemon_json=$(cat /etc/docker/daemon.json)
+  jq -s '.[0] * .[1]' <(echo $${daemon_json}) <(cat <<EOF
+  {
+      "default-runtime": "nvidia",
+      "runtimes": {
+          "nvidia": {
+              "path": "/usr/bin/nvidia-container-runtime",
+              "runtimeArgs": []
+          }
+      }
+  }
+EOF
+  ) > /etc/docker/daemon.json
+
+  shutdown -r now # Yes, restart is needed :(
+
+fi
+########### END GPU support ###########
 
 %{ endif }
