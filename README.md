@@ -118,8 +118,8 @@ You can add nodes to the cluster by adding them in terraform.tfvars (uncomment s
 
 To remove a worker node remove it from terraform.tfvars, then drain and remove it from the cluster before letting terraform destroy it.
 
-    terraform drain --ignore-daemonsets gonner
-    terraform delete node gonner
+    kubectl drain --ignore-daemonsets gonner
+    kubectl delete node gonner
     terraform apply
 
 Removing a master node is healthier when `kubeadm reset` is run on the node first so it is removed from the etcd cluster. But it might have some real-world application to know what happens when you don't do that... Note that the initial master is in no way special and it is save for the cluster to remove it (if you keep at least one other master around).
